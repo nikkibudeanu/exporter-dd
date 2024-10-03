@@ -1,0 +1,13 @@
+{
+  "name": "design-language-tools",
+  "version": "0.1.3",
+  "exports": {
+    "./lib": "./prism-devtools-figma-plugin/src/lib.mjs",
+    "./tokens": "./prism-devtools-figma-plugin/src/tokens.mjs"
+  },
+  "repository": "git@github.com:doordash/design-language-tools.git",
+  "author": "Design Infrastructure <design-infrastructure-core@doordash.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module"
+}

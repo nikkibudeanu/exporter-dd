@@ -1,0 +1,527 @@
+import Foundation
+import SwiftUI
+import UIKit
+
+/// A token representation of a shadow.
+///
+/// This is used to apply a shadow effect to a view.
+public struct PrismShadow {
+    /// The color of the shadow.
+    public let color: UIColor
+
+    /// The x offset of the shadow.
+    public let x: CGFloat
+
+    /// The y offset of the shadow.
+    public let y: CGFloat
+
+    /// The blur radius of the shadow.
+    public let radius: CGFloat
+
+    /// Creates a new shadow token.
+    ///
+    /// - Parameters:
+    ///   - color: The color of the shadow.
+    ///   - x: The x offset of the shadow.
+    ///   - y: The y offset of the shadow.
+    ///   - radius: The blur radius of the shadow.
+    public init(color: UIColor,
+                x: CGFloat,
+                y: CGFloat,
+                radius: CGFloat) {
+        self.color = color
+        self.x = x
+        self.y = y
+        self.radius = radius
+    }
+}
+
+/// A token representation of a font.
+///
+/// This is used to apply a font to a text view.
+public struct PrismTypography {
+    /// The font family of the typography.
+    public let fontFamily: String
+    
+    /// The weight of the typography.
+    public let weight: String
+    
+    /// The size of the typography.
+    public let size: CGFloat
+
+    /// The line height of the typography.
+    public let lineHeight: CGFloat
+
+    /// The letter spacing of the typography.
+    public let letterSpacing: CGFloat
+
+    /// Creates a new typography token.
+    ///
+    /// - Parameters:
+    ///   - fontFamily: The font family of the typography.
+    ///   - weight: The weight of the typography.
+    ///   - size: The size of the typography.
+    ///   - lineHeight: The line height of the typography.
+    ///   - letterSpacing: The letter spacing of the typography.
+    public init(fontFamily: String,
+                weight: String,
+                size: CGFloat,
+                lineHeight: CGFloat? = nil,
+                letterSpacing: CGFloat? = nil) {
+        self.fontFamily = fontFamily
+        self.weight = weight
+        self.size = size
+        self.lineHeight = lineHeight ?? 0
+        self.letterSpacing = letterSpacing ?? 0            
+    }
+
+    /// Provides a `SwiftUI` `Font` representation of the typography.
+    public var font: Font {
+        .custom(fontName, fixedSize: size)
+    }
+
+    /// Provides a `UIKit` `UIFont` representation of the typography.
+    /// 
+    /// If the font cannot be determined, this will return the system font of the same size.
+    public var uiFont: UIFont {
+        guard let font = UIFont(name: fontName, size: size) else {
+            return UIFont.systemFont(ofSize: size)
+        }
+
+        return font
+    }
+
+    private var fontName: String {
+        "\(fontFamily)-\(weight)".replacingOccurrences(of: " ", with: "")
+    }
+}
+
+extension PrismTypography: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.font == rhs.font
+    }
+}
+
+/// A token representation of a size value.
+///
+/// This is used to adjust the size of a view. For example, the width or height of a view.
+public struct PrismSizing {
+    /// The value of the sizing token.
+    public let value: CGFloat
+
+    /// Creates a new sizing token.
+    ///
+    /// - Parameter value: The value of the sizing token.
+    public init(value: CGFloat) {
+        self.value = value
+    }
+}
+
+extension PrismSizing: Hashable {
+    public static func == (lhs: PrismSizing, rhs: PrismSizing) -> Bool {
+        lhs.value == rhs.value
+    }
+}
+
+/// A token representation of a spacing value.
+///
+/// This is used to adjust the spacing between views. For example, the spacing between elements in a stack.
+public struct PrismSpacing {
+    /// The value of the spacing token.
+    public let value: CGFloat
+    
+    /// Creates a new spacing token.
+    ///
+    /// - Parameter value: The value of the spacing token.
+    public init(value: CGFloat) {
+        self.value = value
+    }
+}
+
+extension PrismSpacing: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.value == rhs.value
+    }
+}
+
+/// A token representation of a border radius value.
+///
+/// This is used to adjust the border radius of a view.
+public struct PrismBorderRadius {
+    /// The value of the border radius token.
+    public let value: CGFloat
+
+    /// Creates a new border radius token.
+    ///
+    /// - Parameter value: The value of the border radius token.
+    init(value: CGFloat) {
+        self.value = value
+    }
+}
+
+extension PrismBorderRadius: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.value == rhs.value
+    }
+}
+
+/// A token representation of a border width value.
+///
+/// This is used to adjust the border width of a view.
+public struct PrismBorderWidth {
+    /// The value of the border width token.
+    public let value: CGFloat
+    
+    /// Creates a new border width token.
+    ///
+    /// - Parameter value: The value of the border width token.
+    init(value: CGFloat) {
+        self.value = value
+    }
+}
+
+extension PrismBorderWidth: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.value == rhs.value
+    }
+}
+
+/// A set of extensions to access the underlying CGFloat value of various Prism token types.
+public extension CGFloat {
+    /// Gets the `CGFloat` value of a ``PrismSpacing`` token.
+    ///
+    /// - Parameter spacing: The spacing token.
+    /// - Returns: The `CGFloat` value of the spacing token.
+    static func spacing(_ spacing: PrismSpacing) -> CGFloat {
+        return spacing.value
+    }
+
+    /// Gets the `CGFloat` value of a ``PrismSizing`` token.
+    ///
+    /// - Parameter sizing: The sizing token.
+    /// - Returns: The `CGFloat` value of the sizing token.
+    static func sizing(_ sizing: PrismSizing) -> CGFloat {
+        return sizing.value
+    }
+
+    /// Gets the `CGFloat` value of a ``PrismBorderRadius`` token.
+    ///
+    /// - Parameter borderRadius: The border radius token.
+    /// - Returns: The `CGFloat` value of the border radius token.
+    static func borderRadius(_ borderRadius: PrismBorderRadius) -> CGFloat {
+        return borderRadius.value
+    }
+
+    /// Gets the `CGFloat` value of a ``PrismBorderWidth`` token.
+    ///
+    /// - Parameter borderWidth: The border width token.
+    /// - Returns: The `CGFloat` value of the border width token.
+    static func borderWidth(_ borderWidth: PrismBorderWidth) -> CGFloat {
+        return borderWidth.value
+    }
+}
+
+/// Provides a set of extensions to interact with an `HStack` view using Prism tokens.
+extension HStack {
+    /// Creates a new horizontal stack with the specified alignment, spacing, and content.
+    ///
+    /// - Parameters:
+    ///   - alignment: The alignment of the horizontal stack.
+    ///   - spacing: The spacing between elements in the horizontal stack.
+    ///   - content: The content of the horizontal stack.
+    @inlinable public init(alignment: VerticalAlignment = .center, spacing: PrismSpacing, @ViewBuilder content: () -> Content) {
+        self.init(alignment: alignment, spacing: .spacing(spacing) , content: content)
+    }
+}
+
+/// Provides a set of extensions to interact with a `VStack` view using Prism tokens.
+extension VStack {
+    /// Creates a new vertical stack with the specified alignment, spacing, and content.
+    ///
+    /// - Parameters:
+    ///   - alignment: The alignment of the vertical stack.
+    ///   - spacing: The spacing between elements in the vertical stack.
+    ///   - content: The content of the vertical stack.
+    @inlinable public init(alignment: HorizontalAlignment = .center, spacing: PrismSpacing, @ViewBuilder content: () -> Content) {
+        self.init(alignment: alignment, spacing: .spacing(spacing), content: content)
+    }
+}
+
+/// Provides a set of extensions to interact with a `Spacer` view using Prism tokens.
+extension Spacer {
+    /// Creates a new spacer with the specified minLength.
+    ///
+    /// - Parameter minLength: The minLength of the spacer.
+    @inlinable public init(minLength: PrismSpacing) {
+        self.init(minLength: .spacing(minLength))
+    }
+}
+
+/// Provides a set of extensions to interact with a `Shape` view using Prism tokens.
+extension Shape {
+    /// Sets the stroke of the shape with the specified content and lineWidth.
+    ///
+    /// - Parameters:
+    ///   - content: The content `ShapeStyle` of the stroke.
+    ///   - lineWidth: The lineWidth of the stroke.
+    @inlinable public func stroke<S>(_ content: S, lineWidth: PrismBorderWidth) -> some View where S : ShapeStyle {
+        self.stroke(content, lineWidth: .borderWidth(lineWidth))
+    }
+}
+
+/// An environment key ``PrismTypography``.
+public struct PrismTypographyEnvironmentKey: EnvironmentKey {
+    /// The default value of the typography environment key. By default it will reference the `usageTypeBodyMediumDefault` token.
+    public static var defaultValue: PrismTypography = .usageTypeBodyMediumDefault
+}
+
+/// An extension for interacting with the `PrismTypography` environment key.
+public extension EnvironmentValues {
+    /// The typography environment key.
+    var prismTypography: PrismTypography {
+        get { self[PrismTypographyEnvironmentKey.self] }
+        set { self[PrismTypographyEnvironmentKey.self] = newValue }
+    }
+}
+
+struct PrismTypographyViewModifier: ViewModifier {
+    
+    let typography: PrismTypography
+    
+    init(typography: PrismTypography) {
+        self.typography = typography
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .lineSpacing(typography.lineHeight / typography.size)
+            .font(typography.font)
+            .environment(\.prismTypography, typography)
+    }
+}
+
+/// A set of view modifier extensions to interact with a `Text` view using Prism tokens.
+public extension Text {
+    /// Sets the font of the text to the specified typography.
+    ///
+    /// - Parameter typography: The typography of the text.
+    /// - Returns: The text with the specified typography.
+    func font(_ typography: PrismTypography) -> some View {
+        return kerning(typography.letterSpacing)
+            .modifier(PrismTypographyViewModifier(typography: typography))
+    }
+}
+
+/// A set of view modifier extensions to interact with a `View` using Prism tokens.
+public extension View {
+    /// Sets the border radius of the view to the specified radius.
+    ///
+    /// - Parameters:
+    ///   - radius: The border radius of the view.
+    ///   - antialiased: A boolean value indicating whether the view should be antialiased.
+    /// - Returns: The view with the specified border radius.
+    func borderRadius(_ radius: PrismBorderRadius, antialiased: Bool = true) -> some View {
+        cornerRadius(radius.value, antialiased: antialiased)
+    }
+
+    /// Sets the border of the view to the specified color and width.
+    ///
+    /// - Parameters:
+    ///   - color: The color of the border.
+    ///   - width: The width of the border.
+    /// - Returns: The view with the specified border.
+    func border(_ color: Color, width: PrismBorderWidth) -> some View {
+        border(color, width: .borderWidth(width))
+    }
+    
+    /// Sets the corner radius of the view to the specified radius.
+    ///
+    /// - Parameters:
+    ///   - radius: The corner radius of the view.
+    ///   - antialiased: A boolean value indicating whether the view should be antialiased.
+    /// - Returns: The view with the specified corner radius.
+    func cornerRadius(_ radius: PrismBorderRadius, _ antialiased: Bool = true) -> some View {
+        cornerRadius(radius.value, antialiased: antialiased)
+    }
+
+    /// Sets the font of the view to the specified typography.
+    ///
+    /// - Parameter typography: The typography of the view.
+    /// - Returns: The view with the specified typography.
+    func font(_ typography: PrismTypography) -> some View {
+        modifier(PrismTypographyViewModifier(typography: typography))
+    }
+    
+    /// Sets the offset of the view to the specified x and y values.
+    ///
+    /// - Parameters:
+    ///   - x: The x offset of the view.
+    ///   - y: The y offset of the view.
+    /// - Returns: The view with the specified offset.
+    func offset(x: PrismSpacing = .usageSpaceNone, y: PrismSpacing = .usageSpaceNone) -> some View {
+        offset(x: .spacing(x), y: .spacing(y))
+    }
+
+    /// Sets the padding of the view to the specified edges and length.
+    ///
+    /// - Parameters:
+    ///   - edges: The edges to apply the padding to.
+    ///   - length: The length of the padding.
+    /// - Returns: The view with the specified padding.
+    func padding(_ edges: Edge.Set = .all, _ length: PrismSpacing) -> some View {
+        padding(edges, .spacing(length))
+    }
+
+    /// Sets the shadow of the view to the specified shadow.
+    ///
+    /// - Parameter shadow: The shadow of the view.
+    /// - Returns: The view with the specified shadow.
+    func shadow(_ shadow: PrismShadow) -> some View {
+        self.shadow(color: Color(shadow.color),
+                    radius: shadow.radius,
+                    x: shadow.x,
+                    y: shadow.y)
+    }
+
+    /// Sets the frame of the view to the specified sizing.
+    ///
+    /// - Parameters:
+    ///   - minWidth: The minimum width of the view.
+    ///   - idealWidth: The ideal width of the view.
+    ///   - maxWidth: The maximum width of the view.
+    ///   - minHeight: The minimum height of the view.
+    ///   - idealHeight: The ideal height of the view.
+    ///   - maxHeight: The maximum height of the view.
+    /// - Returns: The view with the specified frame.
+    func frame(minWidth: PrismSizing? = nil,
+               idealWidth: PrismSizing? = nil,
+               maxWidth: PrismSizing? = nil,
+               minHeight: PrismSizing? = nil,
+               idealHeight: PrismSizing? = nil,
+               maxHeight: PrismSizing? = nil) -> some View {
+        self.frame(minWidth: sizeToCGFloat(minWidth),
+                   idealWidth: sizeToCGFloat(idealWidth),
+                   maxWidth: sizeToCGFloat(maxWidth),
+                   minHeight: sizeToCGFloat(minHeight),
+                   idealHeight: sizeToCGFloat(idealHeight),
+                   maxHeight: sizeToCGFloat(maxHeight))
+    }
+
+    /// Sets the frame of the view to the specified sizing.
+    ///
+    /// - Parameters:
+    ///   - width: The width of the view.
+    ///   - height: The height of the view.
+    /// - Returns: The view with the specified frame.
+    func frame(width: PrismSizing? = nil,
+               height: PrismSizing? = nil) -> some View {
+        return self.frame(width: sizeToCGFloat(width), height: sizeToCGFloat(height))
+    }
+
+    private func sizeToCGFloat(_ size: PrismSizing?) -> CGFloat? {
+        if let size = size {
+            return .sizing(size)
+        }
+        return nil
+    }
+
+    /// Sets the size of the view to the platform minimum touch area.
+    ///
+    /// - Returns: The view with the adjusted size.
+    func adjustSizeForMinimumTouchArea () -> some View {
+        modifier(TouchTargetSizeFrameModifier())
+    }
+}
+
+struct TouchTargetSizeFrameModifier: ViewModifier {
+    public func body(content: Content) -> some View {
+        content.frame(minWidth: 44, minHeight: 44)
+            .contentShape(Rectangle())
+    }
+}
+
+
+/// A token representation of a motion duration value.
+///
+/// This is used to adjust the timing or delay of an `Animation`.
+public struct PrismTimeInterval {
+
+    private let tokenValue: String
+
+    internal init(tokenValue: String) {
+        self.tokenValue = tokenValue
+    }
+
+    /// The `TimeInterval` value of the motion duration token.
+    public var value: TimeInterval {
+        (Double(tokenValue) ?? 0) / 1000
+    }
+}
+
+/// A token representation of a motion easing value.
+///
+/// This is used to adjust the easing of an `Animation`.
+public struct PrismEasing {
+
+    private let processedComponents: [Double]
+
+    // Processes the token value to remove any unnecessary characters and parse the easing curve components.
+    // Example valid input: "[0.42, 0, 0.58, 1]"
+    internal init(tokenValue: String) {
+        var temp = tokenValue
+        temp.removeAll { char in
+            char == "[" || char == "]" || char == " "
+        }
+        let components = temp.split(separator: ",").map { Double($0) ?? 0 }
+        if components.count == 4 {
+            self.processedComponents = components
+        } else {
+            self.processedComponents = [0,0,0,0]
+        }
+    }
+
+    /// The first x component of the easing token.
+    public var p1x: Double {
+        Double(processedComponents[0])
+    }
+
+    /// The first y component of the easing token.
+    public var p1y: Double {
+        Double(processedComponents[1])
+    }
+
+    /// The second x component of the easing token.
+    public var p2x: Double {
+        Double(processedComponents[2])
+    }
+
+    /// The second y component of the easing token.
+    public var p2y: Double {
+        Double(processedComponents[3])
+    }
+
+    /// The `UnitCurve` representation of the easing token.
+    @available(iOS 17.0, *)
+    public var unitCurve: UnitCurve {
+        .bezier(startControlPoint: UnitPoint(x: p1x, y: p1y), endControlPoint: UnitPoint(x: p2x, y: p2y))
+    }
+}
+
+public extension Animation {
+
+    /// An animation created from a Prism easing and duration.
+    ///
+    /// - Parameters:
+    ///   - easing: The easing of the animation.
+    ///   - duration: The duration of the animation.
+    static func prismTimingCurve(easing: PrismEasing, duration: PrismTimeInterval) -> Animation {
+        return timingCurve(easing.p1x, easing.p1y, easing.p2x, easing.p2y, duration: duration.value)
+    }
+
+    /// Delays the start of the animation by the specified Prism duration
+    ///
+    /// - Parameter delay: The delay of the animation.
+    func delay(_ delay: PrismTimeInterval) -> Animation {
+        self.delay(delay.value)
+    }
+}

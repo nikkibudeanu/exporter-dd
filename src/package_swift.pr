@@ -1,0 +1,34 @@
+// swift-tools-version:5.5
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+{[ let brand = ds.currentBrand() /]}
+{[ const themes = ds.allThemes(brand.id) /]}
+{[ const lightThemes = lightThemes(themes, true) /]}
+
+let package = Package(
+    name: "PrismTokens",
+    platforms: [.iOS(.v15)],
+    products: [
+        .library(name: "PrismTokens", targets: ["PrismTokens"]),
+        {[ for theme in lightThemes ]}
+        .library(name: "PrismTokens{{ theme.name }}", targets: ["PrismTokens{{ theme.name }}"]),
+        {[/]}
+    ],
+    dependencies: [],
+    targets: [
+        .target(
+            name: "PrismTokens",
+            dependencies: [],
+            resources: [.process("Fonts")]
+        ),
+        {[ for theme in lightThemes ]}
+        .target(
+            name: "PrismTokens{{ theme.name }}",
+            dependencies: ["PrismTokens"],
+            resources: [.process("Fonts")]
+        ),
+        {[/]}
+    ]
+)

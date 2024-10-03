@@ -1,0 +1,22 @@
+{
+    "id": "doordash.prism.ios",
+    "name": "Prism iOS",
+    "description": "Token exporter for Prism iOS",
+    "source_dir": "src",
+    "version": "1.0.1",
+    "tags": ["Prism", "Prism iOS", "DoorDash", "Tokens"],
+    "author": "Design Infrastructure",
+    "organization": "DoorDash",
+    "homepage": "https://prism.doordash.com",
+    "usesBrands": true,
+    "usesThemes": true,
+    "config": {
+        "sources": "sources.json",
+        "output": "output.json",
+        "js": "src/js/helpers.js"
+    },
+    "engines": {
+        "pulsar": "1.0.0",
+        "supernova": "1.0.0"
+    }
+}

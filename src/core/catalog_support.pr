@@ -1,0 +1,459 @@
+import Foundation
+import SwiftUI
+import UIKit
+
+/// Protocol providing a view for a given value, used to support displaying tokens in the Prism Catalog.
+///
+/// This protocol exists to support the Prism Catalog. It **should not be used in client development**.
+public protocol DisplayableValue {
+    /// The view type to be used to display the token name/value pair.
+    associatedtype Examples: View
+
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    func viewForValue(name: String) -> Examples
+}
+
+/// Protocol providing a view for a given token/value pair, used to support displaying tokens in the Prism Catalog.
+///
+/// This protocol exists to support the Prism Catalog. It **should not be used in client development**.
+public protocol TokenValuePair {
+    /// The value of the token
+    associatedtype Value: DisplayableValue
+
+    /// The view type to display a token name/value pair.
+    associatedtype TokenView: View
+    
+    /// The name of the token.
+    var name: String { get }
+
+    /// The value of the token.
+    var value: Value { get }
+
+    /// Produces a view representing the token name/value pair.
+    var tokenValueView: TokenView { get }
+}
+
+/// Provides a name/value `View` representation of a ``PrismShadow`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismShadowCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+
+    private var token: PrismShadow {
+        PrismShadow(tokenName: self.tokenName) ?? .usageElevationNone
+    }
+
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        VStack {
+            ZStack {
+                RoundedRectangle(cornerRadius: .borderRadius(.usageBorderRadiusMedium))
+                    .foregroundColor(.usageColorBackgroundDefault)
+                    .frame(height: .sizing(.usageSizeSmall))
+                    .shadow(token)
+
+                Text(".shadow(.\(name))")
+                    .font(.usageTypeLabelXSmallDefault)
+                    .foregroundColor(.baseColorBlack)
+                    .padding()
+            }
+
+            Spacer()
+                .frame(height: 50)
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a ``PrismShadow`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismShadowTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public let name: String
+
+    /// The value of the token.
+    public let value: PrismShadowCatalogValue
+    
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+
+    internal init(name: String, value: PrismShadowCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Provides a name/value `View` representation of a ``PrismTypography`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismTypographyCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+
+    private var token: PrismTypography {
+        PrismTypography(tokenName: self.tokenName) ?? .usageTypeBodyMediumDefault
+    }
+    
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+    
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        HStack(spacing: .spacing(.usageSpaceXSmall)) {
+            Text(name).font(token)
+            Spacer()
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a ``PrismTypography`` token.
+/// 
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismTypographyTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public let name: String
+
+    /// The value of the token.
+    public let value: PrismTypographyCatalogValue
+    
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+
+    internal init(name: String, value: PrismTypographyCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Provides a name/value `View` representation of a ``PrismSizing`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismSizingCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+    
+    private var token: PrismSizing {
+        PrismSizing(tokenName: self.tokenName) ?? .usageSizeNone
+    }
+
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        VStack(alignment: .leading) {
+            Rectangle()
+                .frame(height: token.value)
+            
+            Text(".sizing(.\(name)) = \(String(describing: token.value))pt")
+                .font(.usageTypeBodyMediumDefault)
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a ``PrismSizing`` token.
+public struct PrismSizingTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public let name: String
+    
+    /// The value of the token.
+    public let value: PrismSizingCatalogValue
+    
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+
+    internal init(name: String, value: PrismSizingCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Provides a name/value `View` representation of a ``PrismSpacing`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismSpacingCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+    
+    private var token: PrismSpacing {
+        PrismSpacing(tokenName: self.tokenName) ?? .usageSpaceNone
+    }
+
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+    
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        VStack(alignment: .center) {
+            Rectangle()
+                .frame(width: token.value)
+            
+            Text(".spacing(.\(name)) = \(String(describing: token.value))pt")
+                .font(.usageTypeBodyMediumDefault)
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a ``PrismSpacing`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismSpacingTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public let name: String
+
+    /// The value of the token.
+    public let value: PrismSpacingCatalogValue
+    
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+
+    internal init(name: String, value: PrismSpacingCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Provides a name/value `View` representation of a ``PrismBorderRadius`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismBorderRadiusCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+    
+    private var token: PrismBorderRadius {
+        PrismBorderRadius(tokenName: self.tokenName) ?? .usageBorderRadiusNone
+    }
+
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+    
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        VStack {
+            Text("RoundedRectangle(cornerRadius: .borderRadius(.\(name)))")
+                .foregroundColor(.usageColorTextDefault)
+                .font(.usageTypeBodyMediumDefault)
+                .padding()
+
+            RoundedRectangle(cornerRadius: .borderRadius(token))
+                .fill(Color.compColorButtonPrimaryBackgroundDefault)
+                .frame(height: 50)
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a ``PrismBorderRadius`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismBorderRadiusTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public let name: String
+    
+    /// The value of the token.
+    public let value: PrismBorderRadiusCatalogValue
+
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+    
+    internal init(name: String, value: PrismBorderRadiusCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Provides a name/value `View` representation of a ``PrismBorderWidth`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismBorderWidthCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+
+    private var token: PrismBorderWidth {
+        PrismBorderWidth(tokenName: self.tokenName) ?? .usageBorderWidthDefault
+    }
+
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        ZStack {
+            Rectangle()
+                .fill(.background)
+                .frame(height: 100)
+                .border(.usageColorBrandPrimary, width: token)
+
+            Text("View.border(.borderWidth(.\(name)))")
+                .font(.usageTypeBodyMediumDefault)
+                .padding()
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a ``PrismBorderWidth`` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismBorderWidthTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public let name: String
+
+    /// The value of the token.
+    public let value: PrismBorderWidthCatalogValue
+
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+
+    internal init(name: String, value: PrismBorderWidthCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Provides a name/value `View` representation of a `LinearGradient` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismLinearGradientCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+
+    private var token: LinearGradient {
+        LinearGradient(tokenName: self.tokenName) ?? .compColorDatePickerRangeGradientToRightDefault
+    }
+    
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        ZStack {
+            Rectangle()
+                .fill(.background)
+                .frame(height: 50)
+                .overlay(token)
+
+            Text("View.overlay(LinearGradient.\(String(describing: name)))")
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a `LinearGradient` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismLinearGradientTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public let name: String
+
+    /// The value of the token.
+    public let value: PrismLinearGradientCatalogValue
+    
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+
+    internal init(name: String, value: PrismLinearGradientCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}
+
+/// Provides a name/value `View` representation of a `Color` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismColorCatalogValue: DisplayableValue, Hashable {
+    private let tokenName: String
+    
+    private var token: Color {
+        Color(tokenName: self.tokenName) ?? .clear
+    }
+    
+    internal init(tokenName: String) {
+        self.tokenName = tokenName
+    }
+
+    /// Produces a view representing the token name/value pair.
+    ///
+    /// This is used in support of the Prism Catalog and **should not be used in client development**.
+    /// - Parameter name: The name of the token to display.
+    /// - Returns: A view representing the token name/value pair.
+    public func viewForValue(name: String) -> some View {
+        HStack {
+            Circle()
+                .foregroundColor(token)
+                .overlay(Circle().strokeBorder(.black, lineWidth: .borderWidth(.usageBorderWidthDefault)))
+                .frame(width: 16, height: 16)
+                .fixedSize()
+            Text(name)
+                .font(.usageTypeBodyMediumDefault)
+            Spacer()
+        }
+    }
+}
+
+/// Hashable struct providing a `View` representation of a `Color` token.
+///
+/// This struct is exposed to support the Prism Catalog and **should not be used in client development**.
+public struct PrismColorTokenValuePair: TokenValuePair, Hashable {
+    /// The name of the token.
+    public var name: String
+
+    /// The value of the token.
+    public var value: PrismColorCatalogValue
+    
+    /// A view representing the token name/value pair.
+    public var tokenValueView: some View {
+        value.viewForValue(name: name)
+    }
+
+    internal init(name: String, value: PrismColorCatalogValue) {
+        self.name = name
+        self.value = value
+    }
+}

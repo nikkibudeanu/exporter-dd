@@ -1,0 +1,79 @@
+{
+    "blueprints": [
+        {
+            "invoke": "package_swift.pr",
+            "write_to": "Package.swift"  
+        },
+        {
+            "invoke": "theme_provider_interface.pr",
+            "write_to": "Sources/PrismTokens/Core/PrismThemeProvider.swift"
+        },
+        {
+            "invoke": "token_source.pr",
+            "write_to": "Sources/PrismTokens/Core/PrismTokenSource.swift"
+        },
+        {
+            "invoke": "core_types.pr",
+            "write_to": "Sources/PrismTokens/Core/CoreTypes.swift"
+        },
+        {
+            "invoke": "catalog_support.pr",
+            "write_to": "Sources/PrismTokens/Core/CatalogSupport.swift"
+        },
+        {
+            "invoke": "border-radius_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/BorderRadius+Extensions.swift"
+        },
+        {
+            "invoke": "border-width_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/BorderWidth+Extensions.swift"
+        },
+        {
+            "invoke": "color_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/Color+Extensions.swift"
+        },
+        {
+            "invoke": "easing_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/Easing+Extensions.swift"
+        },
+        {
+            "invoke": "gradient_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/Gradient+Extensions.swift"
+        },
+        {
+            "invoke": "shadow_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/Shadow+Extensions.swift"
+        },
+        {
+            "invoke": "spacing_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/Spacing+Extensions.swift"
+        },
+        {
+            "invoke": "sizing_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/Sizing+Extensions.swift"
+        },
+        {
+            "invoke": "time_interval_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/TimeInterval+Extensions.swift"
+        },
+        {
+            "invoke": "typography_extensions.pr",
+            "write_to": "Sources/PrismTokens/Core/Extensions/Typography+Extensions.swift"
+        },
+        {
+            "invoke": "theme_activators.pr",
+            "write_to": "",
+            "emit_only": true
+        },
+        {
+            "invoke": "theme_providers.pr",
+            "write_to": "",
+            "emit_only": true
+        },
+        {
+            "invoke": "theme_fonts.pr",
+            "write_to": "",
+            "emit_only": true
+        }
+    ]
+}
